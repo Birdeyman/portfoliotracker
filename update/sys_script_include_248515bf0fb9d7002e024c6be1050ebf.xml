@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_177652_portfolio.CryptoRestUtils</api_name>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>CryptoRestUtils</name>
+        <script><![CDATA[var CryptoRestUtils = Class.create();
+CryptoRestUtils.prototype = {
+	initialize: function () {},
+
+	getDailyUpdates: function () {
+		this.checkCurrencies('Primary');
+		this.checkCurrencies('Secondary');
+	},
+
+	checkCurrencies: function (vType) {
+		var currencyArray = [];
+		var retVal = {};
+		try {
+			var method = 'Get ' + vType + ' Currency Codes';
+			var r = new sn_ws.RESTMessageV2('Independent Reserve - Public', method);
+			var response = r.execute();
+			retVal.responseBody = response.getBody();
+			retVal.httpStatus = response.getStatusCode();
+		} catch (ex) {
+			retVal.message = ex.getMessage();
+		}
+		if (retVal.httpStatus == '200') {
+			var parser = new global.JSONParser();
+			currencyArray = parser.parse(retVal.responseBody);
+		}
+		if (currencyArray.length > 0) {
+			for (i = 0; i < currencyArray.length; i++) {
+				var exchangeID = this.getExchangeID('Independent Reserve');
+				if (!this.checkCurrencyExists(currencyArray[i], vType, 'Independent Reserve')) {
+					var grCurrencyInsert = new GlideRecord('x_177652_portfolio_currency');
+					grCurrencyInsert.initialize();
+					grCurrencyInsert.code = currencyArray[i].toUpperCase();
+					grCurrencyInsert.type = vType;
+					grCurrencyInsert.exchange = exchangeID;
+					grCurrencyInsert.insert();
+				}
+			}
+		}
+	},
+
+
+	checkCurrencyExists: function (vCurrency, vType, vExchange) {
+		var grCurrency = new GlideRecord('x_177652_portfolio_currency');
+		grCurrency.addQuery('code', vCurrency.toUpperCase());
+		grCurrency.addQuery('type', vType);
+		grCurrency.addQuery('exchange.name', vExchange);
+		grCurrency.query();
+		return (grCurrency.next() ? true : false);
+		/**
+		if(grCurrency.next()){
+		return true;
+		} else {
+		return false;
+		}**/
+	},
+	
+	getExchangeID: function(vExchange){
+		var grExchange = new GlideRecord('x_177652_portfolio_exchange');
+		return (grExchange.get('name', vExchange) ? grExchange.sys_id : '');
+	},
+
+	type: 'CryptoRestUtils'
+};
+]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-05-07 20:10:20</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>248515bf0fb9d7002e024c6be1050ebf</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name>CryptoRestUtils</sys_name>
+        <sys_package display_value="Portfolio Tracker" source="x_177652_portfolio">718e5b170fbd97002e024c6be1050e2e</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Portfolio Tracker">718e5b170fbd97002e024c6be1050e2e</sys_scope>
+        <sys_update_name>sys_script_include_248515bf0fb9d7002e024c6be1050ebf</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-05-07 20:26:53</sys_updated_on>
+    </sys_script_include>
+</record_update>

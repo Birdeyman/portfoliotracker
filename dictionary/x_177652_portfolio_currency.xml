@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="Currency" max_length="40" name="x_177652_portfolio_currency" type="collection">
+        <element label="Code" max_length="40" name="code" type="string"/>
+        <element label="Exchange" max_length="32" name="exchange" reference="x_177652_portfolio_exchange" type="reference"/>
+        <element label="Name" mandatory="true" max_length="40" name="name" type="string"/>
+        <element choice="1" label="Type" mandatory="true" max_length="40" name="type" type="choice">
+            <choice>
+                <element label="Primary" value="Primary"/>
+                <element label="Secondary" value="Secondary"/>
+            </choice>
+        </element>
+        <index name="index">
+            <element name="exchange"/>
+        </index>
+    </element>
+</database>

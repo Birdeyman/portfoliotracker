@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="Market" max_length="40" name="x_177652_portfolio_market" type="collection">
+        <element label="Exchange" max_length="32" name="exchange" reference="x_177652_portfolio_exchange" type="reference"/>
+        <element display="true" label="Name" mandatory="true" max_length="40" name="name" type="string"/>
+        <element label="Primary Currency" max_length="32" name="primary_currency" reference="x_177652_portfolio_currency" type="reference"/>
+        <element label="Secondary Currency" max_length="32" name="secondary_currency" reference="x_177652_portfolio_currency" type="reference"/>
+        <index name="index">
+            <element name="primary_currency"/>
+        </index>
+        <index name="index2">
+            <element name="exchange"/>
+        </index>
+        <index name="index3">
+            <element name="secondary_currency"/>
+        </index>
+    </element>
+</database>
